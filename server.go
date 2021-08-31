@@ -8,14 +8,17 @@ import (
 
 func NotesServer(w http.ResponseWriter, r *http.Request) {
 	noteId := strings.TrimPrefix(r.URL.Path, "/notes/")
+	fmt.Fprintf(w, GetNote(noteId))
+}
 
+func GetNote(noteId string) string {
 	if noteId == "10" {
-		fmt.Fprintf(w, "My random note.")
-		return
+		return "My random note."
 	}
 
 	if noteId == "20" {
-		fmt.Fprintf(w, "My other note.")
-		return
+		return "My other note."
 	}
+
+	return ""
 }
