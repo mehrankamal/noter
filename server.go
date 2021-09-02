@@ -6,19 +6,15 @@ import (
 	"strings"
 )
 
-func NotesServer(w http.ResponseWriter, r *http.Request) {
-	noteId := strings.TrimPrefix(r.URL.Path, "/notes/")
-	fmt.Fprintf(w, GetNote(noteId))
+type NoteStore interface {
+	GetNote(noteId string) string
 }
 
-func GetNote(noteId string) string {
-	if noteId == "10" {
-		return "My random note."
-	}
+type NoteServer struct {
+	store NoteStore
+}
 
-	if noteId == "20" {
-		return "My other note."
-	}
-
-	return ""
+func (n *NoteServer) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+	noteId := strings.TrimPrefix(r.URL.Path, "/notes/")
+	fmt.Fprint(rw, n.store.GetNote(noteId))
 }

@@ -5,7 +5,13 @@ import (
 	"net/http"
 )
 
+type InMemoryNoteStore struct{}
+
+func (inMem *InMemoryNoteStore) GetNote(noteId string) string {
+	return "My awesome note"
+}
+
 func main() {
-	handler := http.HandlerFunc(NotesServer)
-	log.Fatal(http.ListenAndServe(":5000", handler))
+	server := &NoteServer{&InMemoryNoteStore{}}
+	log.Fatal(http.ListenAndServe(":5000", server))
 }

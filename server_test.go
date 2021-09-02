@@ -7,12 +7,29 @@ import (
 	"testing"
 )
 
+type StubNoteStore struct {
+	notes map[string]string
+}
+
+func (s *StubNoteStore) GetNote(noteId string) string {
+	note := s.notes[noteId]
+	return note
+}
+
 func TestGETNotes(t *testing.T) {
+	store := StubNoteStore{
+		map[string]string{
+			"10": "My random note.",
+			"20": "My other note.",
+		},
+	}
+	server := &NoteServer{&store}
+
 	t.Run("returns noteid=10 content", func(t *testing.T) {
 		request := newGetNoteRequest("10")
 		response := httptest.NewRecorder()
 
-		NotesServer(response, request)
+		server.ServeHTTP(response, request)
 
 		assertResponseBody(t, response.Body.String(), "My random note.")
 	})
@@ -21,7 +38,7 @@ func TestGETNotes(t *testing.T) {
 		request := newGetNoteRequest("20")
 		response := httptest.NewRecorder()
 
-		NotesServer(response, request)
+		server.ServeHTTP(response, request)
 
 		assertResponseBody(t, response.Body.String(), "My other note.")
 	})
