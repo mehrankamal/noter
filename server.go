@@ -16,5 +16,12 @@ type NoteServer struct {
 
 func (n *NoteServer) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	noteId := strings.TrimPrefix(r.URL.Path, "/notes/")
-	fmt.Fprint(rw, n.store.GetNote(noteId))
+
+	note := n.store.GetNote(noteId)
+
+	if note == "" {
+		rw.WriteHeader(http.StatusNotFound)
+	}
+
+	fmt.Fprint(rw, note)
 }

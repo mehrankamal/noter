@@ -31,6 +31,7 @@ func TestGETNotes(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
+		assertStatus(t, response.Code, http.StatusOK)
 		assertResponseBody(t, response.Body.String(), "My random note.")
 	})
 	t.Run("returns noteid=20 content", func(t *testing.T) {
@@ -40,7 +41,16 @@ func TestGETNotes(t *testing.T) {
 
 		server.ServeHTTP(response, request)
 
+		assertStatus(t, response.Code, http.StatusOK)
 		assertResponseBody(t, response.Body.String(), "My other note.")
+	})
+	t.Run("returns 404 on missing notes", func(t *testing.T) {
+		request := newGetNoteRequest("30")
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		assertStatus(t, response.Code, http.StatusNotFound)
 	})
 }
 
@@ -54,5 +64,12 @@ func assertResponseBody(t testing.TB, got, want string) {
 	t.Helper()
 	if got != want {
 		t.Errorf("Wrong response body, got %q want %q", got, want)
+	}
+}
+
+func assertStatus(t testing.TB, got, want int) {
+	t.Helper()
+	if got != want {
+		t.Errorf("did not correct status code, got %d want %d", got, want)
 	}
 }
