@@ -3,15 +3,11 @@ package main
 import (
 	"log"
 	"net/http"
+
+	"github.com/mehrankamal/noter/notes"
 )
 
-type InMemoryNoteStore struct{}
-
-func (inMem *InMemoryNoteStore) GetNote(noteId string) string {
-	return "My awesome note"
-}
-
 func main() {
-	server := &NoteServer{&InMemoryNoteStore{}}
+	server := &notes.NoteServer{}
 	log.Fatal(http.ListenAndServe(":5000", server))
 }
