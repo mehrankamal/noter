@@ -15,6 +15,16 @@ type NoteServer struct {
 }
 
 func (n *NoteServer) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		n.returnNote(rw, r)
+	case http.MethodPost:
+		n.postNote(rw)
+	}
+
+}
+
+func (n *NoteServer) returnNote(rw http.ResponseWriter, r *http.Request) {
 	noteId := strings.TrimPrefix(r.URL.Path, "/notes/")
 
 	note := n.store.GetNote(noteId)
@@ -24,4 +34,8 @@ func (n *NoteServer) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Fprint(rw, note)
+}
+
+func (n *NoteServer) postNote(rw http.ResponseWriter) {
+	rw.WriteHeader(http.StatusAccepted)
 }

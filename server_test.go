@@ -16,6 +16,23 @@ func (s *StubNoteStore) GetNote(noteId string) string {
 	return note
 }
 
+func TestStoreNotes(t *testing.T) {
+	store := StubNoteStore{
+		map[string]string{},
+	}
+
+	server := &NoteServer{&store}
+
+	t.Run("It sould return accepted on POST", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodPost, "/notes/10", nil)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		assertStatus(t, response.Code, http.StatusAccepted)
+	})
+}
+
 func TestGETNotes(t *testing.T) {
 	store := StubNoteStore{
 		map[string]string{

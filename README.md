@@ -19,3 +19,4 @@ A simple dummy notes taking application written in GoLang to introduce GoLang an
 - Get a notes server working
 - Add persistance using a database
 - Get the user APIs working
+sdlje
