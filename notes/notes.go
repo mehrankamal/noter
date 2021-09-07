@@ -27,7 +27,7 @@ func (server NoteServer) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	respNote := server.Store.GetNote(noteId)
 
-	rw.Header().Add("Content-Type", "app/json")
+	rw.Header().Add("Content-Type", "application/json")
 	if reflect.DeepEqual(respNote, Note{}) {
 		rw.WriteHeader(http.StatusNotFound)
 	}

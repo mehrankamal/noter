@@ -51,7 +51,7 @@ func TestGETNotes(t *testing.T) {
 		}
 
 		assertStatus(t, response.Code, http.StatusOK)
-		assertContentType(t, response.Header().Get("Content-Type"), "app/json")
+		assertContentType(t, response.Header().Get("Content-Type"), "application/json")
 		assertResponseBody(t, response.Body, expectedNote)
 	})
 	t.Run("get note id 2002 for user 1", func(t *testing.T) {
@@ -68,7 +68,7 @@ func TestGETNotes(t *testing.T) {
 		}
 
 		assertStatus(t, response.Code, http.StatusOK)
-		assertContentType(t, response.Header().Get("Content-Type"), "app/json")
+		assertContentType(t, response.Header().Get("Content-Type"), "application/json")
 		assertResponseBody(t, response.Body, expectedNote)
 	})
 	t.Run("return 404 response on missing note", func(t *testing.T) {
@@ -77,7 +77,7 @@ func TestGETNotes(t *testing.T) {
 		server.ServeHTTP(response, request)
 
 		assertStatus(t, response.Code, http.StatusNotFound)
-		assertContentType(t, response.Header().Get("Content-Type"), "app/json")
+		assertContentType(t, response.Header().Get("Content-Type"), "application/json")
 	})
 }
 
