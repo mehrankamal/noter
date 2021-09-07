@@ -51,6 +51,7 @@ func TestGETNotes(t *testing.T) {
 		}
 
 		assertStatus(t, response.Code, http.StatusOK)
+		assertContentType(t, response.Header().Get("Content-Type"), "app/json")
 		assertResponseBody(t, response.Body, expectedNote)
 	})
 	t.Run("get note id 2002 for user 1", func(t *testing.T) {
@@ -67,6 +68,7 @@ func TestGETNotes(t *testing.T) {
 		}
 
 		assertStatus(t, response.Code, http.StatusOK)
+		assertContentType(t, response.Header().Get("Content-Type"), "app/json")
 		assertResponseBody(t, response.Body, expectedNote)
 	})
 	t.Run("return 404 response on missing note", func(t *testing.T) {
@@ -75,7 +77,7 @@ func TestGETNotes(t *testing.T) {
 		server.ServeHTTP(response, request)
 
 		assertStatus(t, response.Code, http.StatusNotFound)
-
+		assertContentType(t, response.Header().Get("Content-Type"), "app/json")
 	})
 }
 
@@ -92,7 +94,7 @@ func assertResponseBody(t testing.TB, respBody *bytes.Buffer, expectedNote Note)
 	respDecoder.Decode(&gotNote)
 
 	if !reflect.DeepEqual(gotNote, expectedNote) {
-		t.Errorf("Expected %v, got %v", expectedNote, gotNote)
+		t.Errorf("Wrong json content, expected %v, got %v", expectedNote, gotNote)
 	}
 }
 
@@ -100,5 +102,12 @@ func assertStatus(t testing.TB, got, want int) {
 	t.Helper()
 	if got != want {
 		t.Errorf("Wrong response status code, expected %d, got %d", want, got)
+	}
+}
+
+func assertContentType(t testing.TB, got, want string) {
+	t.Helper()
+	if got != want {
+		t.Errorf("Wrong Content-Type header: expected %s, got %s", want, got)
 	}
 }
