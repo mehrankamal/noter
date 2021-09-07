@@ -3,6 +3,7 @@ package notes
 import (
 	"encoding/json"
 	"net/http"
+	"reflect"
 	"strings"
 )
 
@@ -14,7 +15,7 @@ type Note struct {
 }
 
 type NoteServer struct {
-	store NoteStore
+	Store NoteStore
 }
 
 type NoteStore interface {
@@ -24,7 +25,11 @@ type NoteStore interface {
 func (server NoteServer) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	noteId := strings.TrimPrefix(r.URL.Path, "/users/1/notes/")
 
-	respNote := server.store.GetNote(noteId)
+	respNote := server.Store.GetNote(noteId)
+
+	if reflect.DeepEqual(respNote, Note{}) {
+		rw.WriteHeader(http.StatusNotFound)
+	}
 
 	rwEncoder := json.NewEncoder(rw)
 	rwEncoder.Encode(respNote)

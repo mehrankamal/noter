@@ -49,6 +49,8 @@ func TestGETNotes(t *testing.T) {
 			Title:   "Awesome note",
 			Content: "My awesome note.",
 		}
+
+		assertStatus(t, response.Code, http.StatusOK)
 		assertResponseBody(t, response.Body, expectedNote)
 	})
 	t.Run("get note id 2002 for user 1", func(t *testing.T) {
@@ -63,7 +65,17 @@ func TestGETNotes(t *testing.T) {
 			Title:   "Other note",
 			Content: "My other note.",
 		}
+
+		assertStatus(t, response.Code, http.StatusOK)
 		assertResponseBody(t, response.Body, expectedNote)
+	})
+	t.Run("return 404 response on missing note", func(t *testing.T) {
+		request := newGetNoteRequest("1", "3003")
+		response := httptest.NewRecorder()
+		server.ServeHTTP(response, request)
+
+		assertStatus(t, response.Code, http.StatusNotFound)
+
 	})
 }
 
@@ -81,5 +93,12 @@ func assertResponseBody(t testing.TB, respBody *bytes.Buffer, expectedNote Note)
 
 	if !reflect.DeepEqual(gotNote, expectedNote) {
 		t.Errorf("Expected %v, got %v", expectedNote, gotNote)
+	}
+}
+
+func assertStatus(t testing.TB, got, want int) {
+	t.Helper()
+	if got != want {
+		t.Errorf("Wrong response status code, expected %d, got %d", want, got)
 	}
 }
