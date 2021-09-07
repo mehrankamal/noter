@@ -74,10 +74,27 @@ func TestGETNotes(t *testing.T) {
 	t.Run("return 404 response on missing note", func(t *testing.T) {
 		request := newGetNoteRequest("1", "3003")
 		response := httptest.NewRecorder()
+
 		server.ServeHTTP(response, request)
 
 		assertStatus(t, response.Code, http.StatusNotFound)
 		assertContentType(t, response.Header().Get("Content-Type"), "application/json")
+	})
+}
+
+func TestPOSTNotes(t *testing.T) {
+	store := StubNoteStore{
+		map[string]Note{},
+	}
+	server := &NoteServer{&store}
+
+	t.Run("Returns accepted on POST", func(t *testing.T) {
+		request, _ := http.NewRequest(http.MethodPost, "/users/1/notes/", nil)
+		response := httptest.NewRecorder()
+
+		server.ServeHTTP(response, request)
+
+		assertStatus(t, response.Code, http.StatusAccepted)
 	})
 }
 

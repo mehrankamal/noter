@@ -23,6 +23,16 @@ type NoteStore interface {
 }
 
 func (server NoteServer) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+	case http.MethodPost:
+		server.postNote(rw, r)
+	case http.MethodGet:
+		server.getNote(rw, r)
+	}
+}
+
+func (server *NoteServer) getNote(rw http.ResponseWriter, r *http.Request) {
 	noteId := strings.TrimPrefix(r.URL.Path, "/users/1/notes/")
 
 	respNote := server.Store.GetNote(noteId)
@@ -34,4 +44,8 @@ func (server NoteServer) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 
 	rwEncoder := json.NewEncoder(rw)
 	rwEncoder.Encode(respNote)
+}
+
+func (server *NoteServer) postNote(rw http.ResponseWriter, r *http.Request) {
+	rw.WriteHeader(http.StatusAccepted)
 }
