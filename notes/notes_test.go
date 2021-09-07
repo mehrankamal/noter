@@ -10,8 +10,32 @@ import (
 	"testing"
 )
 
+type StubNoteStore struct {
+	notes map[string]Note
+}
+
+func (s *StubNoteStore) GetNote(noteID string) Note {
+	note := s.notes[noteID]
+	return note
+}
+
 func TestGETNotes(t *testing.T) {
-	server := NoteServer{}
+	store := StubNoteStore{
+		map[string]Note{
+			"1001": {
+				ID:      "1001",
+				UserID:  "1",
+				Title:   "Awesome note",
+				Content: "My awesome note.",
+			},
+			"2002": {
+				ID:      "2002",
+				UserID:  "1",
+				Title:   "Other note",
+				Content: "My other note.",
+			}}}
+
+	server := NoteServer{&store}
 
 	t.Run("get note id `1001` for user 1", func(t *testing.T) {
 		request := newGetNoteRequest("1", "1001")

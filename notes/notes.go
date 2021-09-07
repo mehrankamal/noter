@@ -14,25 +14,17 @@ type Note struct {
 }
 
 type NoteServer struct {
+	store NoteStore
+}
+
+type NoteStore interface {
+	GetNote(noteID string) Note
 }
 
 func (server NoteServer) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	noteId := strings.TrimPrefix(r.URL.Path, "/users/1/notes/")
-	respNote := Note{
-		ID:      "1001",
-		UserID:  "1",
-		Title:   "Awesome note",
-		Content: "My awesome note.",
-	}
 
-	if noteId == "2002" {
-		respNote = Note{
-			ID:      "2002",
-			UserID:  "1",
-			Title:   "Other note",
-			Content: "My other note.",
-		}
-	}
+	respNote := server.store.GetNote(noteId)
 
 	rwEncoder := json.NewEncoder(rw)
 	rwEncoder.Encode(respNote)
